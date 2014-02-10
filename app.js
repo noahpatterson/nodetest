@@ -25,6 +25,11 @@ app.use(express.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/nodetest');
+
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -33,6 +38,9 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/hello', routes.hello);
+app.get('/userlist', routes.userlist(db));
+app.get('/newuser', routes.newuser);
+app.post('/adduser', routes.adduser(db));
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
